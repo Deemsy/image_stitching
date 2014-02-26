@@ -1,8 +1,14 @@
 function H = homography(im1, im2)
 
 %reading the images here for easy debugging. Should move them to main
-im1 = im2single(imread(im1));
-im2 = im2single(imread(im2));
+img1 = imread(im1);
+img2 = imread(im2);
+
+im1 = inverse_cylinderical_projection (img1,595,-0.15,0);
+im2 = inverse_cylinderical_projection (img2,595,-0.15,0);
+
+im1= im2single(im1);
+im2 = im2single(im2);
 
 if size(im1,3) > 1, I1 = rgb2gray(im1) ; else I1 = im1 ; end
 if size(im2,3) > 1, I2 = rgb2gray(im2) ; else I2 = im2 ; end
@@ -60,7 +66,7 @@ for j = 1:100
   %the next instruction should first calculate the paranethesis then it
   %compares the values to 36. If the value <36, the value in ok will be one
   %(TRUE). otherwise it'll be 0 (False)
-  temp{j} = (deltaU.*deltaU + deltaV.*deltaV) < 6*6 ;
+  temp{j} = (deltaU.*deltaU + deltaV.*deltaV) < 4 ;
   score(j) = sum(temp{j}) ;
 end
 
