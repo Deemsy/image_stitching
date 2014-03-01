@@ -101,6 +101,12 @@ v_proj = (H(2,1) * u + H(2,2) * v + H(2,3)) ./ z_proj ;
 %vl_imwbackward returns the pixels of image im2 at positions u_proj and v_proj
 im2_reconst = vl_imwbackward(im2double(im2),u_proj,v_proj) ;
 
+
+%mos=feather_blend(im1,im2);
+%mos=pyramid_blend(im1,im2);
+
+
+pause
 mass = ~isnan(im1_reconst) + ~isnan(im2_reconst) ;
 im1_reconst(isnan(im1_reconst)) = 0 ;
 im2_reconst(isnan(im2_reconst)) = 0 ;
