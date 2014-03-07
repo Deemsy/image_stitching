@@ -56,7 +56,7 @@ for j = 1:100
   %the next instruction should first calculate the paranethesis then it
   %compares the values to 36. If the value <36, the value in ok will be one
   %(TRUE). otherwise it'll be 0 (False)
-  temp{j} = (deltaU.*deltaU + deltaV.*deltaV) < 4 ;
+  temp{j} = (deltaU.*deltaU + deltaV.*deltaV) < 6 ;
   score(j) = sum(temp{j}) ;
 end
 

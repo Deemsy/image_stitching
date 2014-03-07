@@ -9,6 +9,10 @@ minU=1;
 maxU=size(img1,2);
 minV=1;
 maxV=size(img1,1);
+focalLength=660.8799;
+k1=-0.18533;
+k2=0.21517;
+
 for i=1:length(images)
     if (i==reference)
         allH{i}=eye(3);
@@ -22,8 +26,8 @@ for i=1:length(images)
     img1 = imread(images{j}); 
     img2 = imread(images{i});
 
-    img1 = inverse_cylinderical_projection (img1,595,-0.15,0);
-    img2 = inverse_cylinderical_projection (img2,595,-0.15,0);
+    img1 = inverse_cylinderical_projection (img1,focalLength,k1,k2);
+    img2 = inverse_cylinderical_projection (img2,focalLength,k1,k2);
 
     im1= im2single(img1);
     im2 = im2single(img2);
@@ -71,7 +75,7 @@ vr = minV:maxV;
 
 %reconstructing  im1
 img1 = imread(images{reference});
-img1=inverse_cylinderical_projection (img1,595,-0.15,0);
+img1=inverse_cylinderical_projection (img1,focalLength,k1,k2);
 im1=im2single(img1);
 im1_reconst = vl_imwbackward(im2double(im1),u,v) ;
 
@@ -109,21 +113,11 @@ slope=top/size(im2_reconst,2);
 for i=2:length(images)
     im2_reconst=reconst{i};
     im2_reconst(isnan(im2_reconst)) = 0 ;
-    im1_reconst=pyramid_blend(im1_reconst,im2_reconst);
+    %use feather blending
+    im1_reconst=feather_blend(im1_reconst,im2_reconst);
 end
-%T=[1 -slope; 0 1 ; 0 0 ];
-%t_proj=maketform('affine',T);
-%im1_reconst=mat2gray(imtransform(im1_reconst,t_proj,'FillValues',.3));
 
-imagesc(im1_reconst)
-%mos=feather_blend(im1,im2);
-%mosaic=pyramid_blend(im1_reconst,im2_reconst);
 
-% mass = ~isnan(im1_reconst) + ~isnan(im2_reconst) ;
-% im1_reconst(isnan(im1_reconst)) = 0 ;
-% im2_reconst(isnan(im2_reconst)) = 0 ;
-% mosaic = (im1_reconst + im2_reconst) ./ mass ;
-
-%imagesc(mosaic) ; 
+imagesc(im1_reconst) 
 H=im1_reconst;
 end
