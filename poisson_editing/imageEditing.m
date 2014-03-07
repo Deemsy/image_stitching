@@ -1,5 +1,9 @@
+%
+
+
 offsetRow=60;
 offsetCol=40;
+%read in source image and mask, target image
 target_img=imread('balloon.jpg');
 source_img=imread('deema.jpg');
 mask_img=imread('deemaMask.jpg');
@@ -7,20 +11,25 @@ mask_img=imread('deemaMask.jpg');
 mask=rgb2gray(mask_img);
 mask(find(mask<100))=0;
 [rows cols ~]=size(source_img);
-orig_target=target_img;
-target_img=target_img((offsetRow+1):(rows+offsetRow),(offsetCol+1):(cols+offsetCol),:);
-finalImage=zeros(rows,cols,3);
 n=rows*cols;
 
+orig_target=target_img;
+%only use the portion of the target image we are inserting into
+target_img=target_img((offsetRow+1):(rows+offsetRow),(offsetCol+1):(cols+offsetCol),:);
+
+%initialize image we are solving for
+finalImage=zeros(rows,cols,3);
+
 %set up laplacian
+%credit for laplacian code is from YIJIA XU @ Shanghai University of Engineering Science
+%https://code.google.com/p/imageblending/
 L= [0 1 0;1 -4 1; 0 1 0];
 
 
 
-rows
-cols
+%solve each color channel
 for channel=1:3
-    channel
+    
     target=target_img(:,:,channel);
     source=source_img(:,:,channel);
     laplacian=conv2(source,-L,'same');
@@ -47,8 +56,6 @@ for channel=1:3
                 end
 
                 if mask(neighborRow,j)>0
-                    %solution=solution+(source(i,j)-source(neighborRow,j));
-
                     A(pixel,(neighborRow-1)*cols+j)=-1;
                 else
                     solution=solution+target(neighborRow,j);
@@ -61,8 +68,6 @@ for channel=1:3
                 end
 
                 if mask(i,neighborCol)>0
-                    %solution=solution+(source(i,j)-source(i,neighborCol));
-
                     A(pixel,(i-1)*cols+neighborCol)=-1;
                 else
                     solution=solution+target(i,neighborCol);
@@ -83,8 +88,9 @@ for channel=1:3
     end   
 
 end
+
+%use full target image
 orig_target((offsetRow+1):(rows+offsetRow),(offsetCol+1):(cols+offsetCol),:)=finalImage;
-imagesc(orig_target);             
                 
                 
                 
